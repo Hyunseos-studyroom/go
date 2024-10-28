@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Go WASM Example</title>
+  <script src="wasm_exec.js"></script>
+</head>
+<body>
+<h1>Go WASM Example</h1>
+<input id="num1" type="number" placeholder="Number 1">
+<input id="num2" type="number" placeholder="Number 2">
+<button id="addBtn">Add</button>
+<p id="result"></p>
+
+<script>
+  const go = new Go();
+
+  WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then(result => {
+    go.run(result.instance);
+  });
+
+  document.getElementById("addBtn").onclick = function() {
+    const num1 = parseInt(document.getElementById("num1").value);
+    const num2 = parseInt(document.getElementById("num2").value);
+    const sum = add(num1, num2);
+    document.getElementById("result").innerText = "Result: " + sum;
+  };
+</script>
+</body>
+</html>
