@@ -18,15 +18,19 @@ func Setup(db *mongo.Client) {
 		return
 	}
 
-	dg.AddHandler(message.MessageInfoMsg)
-	dg.AddHandler(message.SendingEmbed)
-
-	dg.Identify.Intents = discordgo.IntentsGuildMessages
-
 	err = dg.Open()
 	if err != nil {
 		fmt.Println("error opening connection,", err)
 		return
+	}
+
+	dg.AddHandler(message.MessageInfoMsg)
+	dg.AddHandler(message.SendingEmbed)
+
+	dg.Identify.Intents = discordgo.IntentsGuildMessages
+	err = dg.UpdateListeningStatus("명령어 리스트는 $사용법")
+	if err != nil {
+		panic(err)
 	}
 
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")

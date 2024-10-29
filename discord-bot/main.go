@@ -23,6 +23,6 @@ func main() {
 		log.Fatal("Error loading.env file")
 	}
 
-	db := database.Setup()
+	db := database.MongoInit()
 	set.Setup(db)
 }
