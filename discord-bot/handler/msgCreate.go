@@ -15,6 +15,8 @@ type Message struct {
 	DB *mongo.Client
 }
 
+var lastMessageID string
+
 const (
 	prefix         = "리챔아"
 	usageCommand   = "$사용법"
@@ -22,10 +24,14 @@ const (
 )
 
 func (d *Message) MessageInfoMsg(s *discordgo.Session, m *discordgo.MessageCreate) {
+	log.Println("MessageInfoMsg called with content:", m.Content)
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-
+	if m.ID == lastMessageID {
+		return
+	}
+	lastMessageID = m.ID
 	content := strings.ToLower(m.Content)
 
 	if strings.HasPrefix(content, prefix) {
@@ -79,7 +85,9 @@ func (d *Message) SendingEmbed(s *discordgo.Session, m *discordgo.MessageCreate)
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-
+	if m.ID == lastMessageID {
+		return
+	}
 	switch m.Content {
 	case usageCommand:
 		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("명령어 목록", "듀\n듀댜?\n\n리챔아 배워 ooo\nooo을 하면 ooo을 함(?)", 16705372))
