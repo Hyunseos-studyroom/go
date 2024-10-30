@@ -9,6 +9,7 @@ import (
 	"log"
 	"math/rand"
 	"strings"
+	"time"
 )
 
 type Message struct {
@@ -38,6 +39,25 @@ func (d *Message) MessageInfoMsg(s *discordgo.Session, m *discordgo.MessageCreat
 		switch content {
 		case prefix + " 안녕", prefix + " 반가워", prefix + " 안녕!", prefix + " 반가워!":
 			s.ChannelMessageSend(m.ChannelID, helloResponses)
+		case prefix + " 자폭해":
+			s.ChannelMessageSend(m.ChannelID, "5")
+			time.Sleep(1 * time.Second)
+			s.ChannelMessageSend(m.ChannelID, "4")
+			time.Sleep(1 * time.Second)
+			s.ChannelMessageSend(m.ChannelID, "3")
+			time.Sleep(1 * time.Second)
+			s.ChannelMessageSend(m.ChannelID, "2")
+			time.Sleep(1 * time.Second)
+			s.ChannelMessageSend(m.ChannelID, "1")
+			time.Sleep(1 * time.Second)
+			s.ChannelMessageSend(m.ChannelID, "펑 (리챔 터지는 소리)")
+		}
+		if strings.HasPrefix(content, "리챔아 삭제해") {
+			err := database.DeleteMSG(s, m, d.DB)
+			if err != nil {
+				log.Println(err)
+				s.ChannelMessageSend(m.ChannelID, "에러남 ㅋㅋㅋ")
+			}
 		}
 		if content == "리챔아" {
 			s.ChannelMessageSend(m.ChannelID, "안녕하세연?")
@@ -63,7 +83,6 @@ func (d *Message) MessageInfoMsg(s *discordgo.Session, m *discordgo.MessageCreat
 			word := strings.Split(m.Content, " ")
 
 			results, haveResults := database.GetMSG(d.DB, word[1])
-			log.Println(results)
 			if haveResults {
 				if len(results) == 0 {
 					return
