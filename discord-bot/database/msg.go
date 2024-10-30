@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"discord-bot/types"
+	"errors"
 	"github.com/bwmarrin/discordgo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -69,8 +70,12 @@ func GetMSG(db *mongo.Client, word string) ([]types.CreateMSG, bool) {
 	}
 }
 
-func DeleteMSG(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Client) error {
+func DeleteMSG(s *discordgo.Session, m *discordgo.MessageCreate) error {
 	index := strings.Split(m.Content, " ")
+	if len(index) < 3 || index[2] == "" { // 배열 길이 체크 추가
+		return errors.New("숫자 안씀")
+	}
+
 	count, err := strconv.Atoi(index[2])
 	if err != nil {
 		return err
@@ -99,16 +104,16 @@ func DeleteMSG(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Clien
 		}
 	}
 
-	// 이미지 파일을 열고 전송합니다.
+	// 이미지 파일을 전송하기 전 nil 체크 추가
 	image, err := os.Open("Untitled.jpg")
 	if err != nil {
-		return err
+		return err // 파일 열기 실패 시 에러 반환
 	}
 	defer image.Close() // 파일을 사용한 후 반드시 닫아줍니다.
 
 	_, err = s.ChannelFileSend(m.ChannelID, "Untitled.jpg", image)
 	if err != nil {
-		return err
+		return err // 파일 전송 실패 시 에러 반환
 	}
 
 	return nil
