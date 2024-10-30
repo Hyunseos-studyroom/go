@@ -35,72 +35,77 @@ func (d *Message) MessageInfoMsg(s *discordgo.Session, m *discordgo.MessageCreat
 	lastMessageID = m.ID
 	content := strings.ToLower(m.Content)
 
-	if strings.HasPrefix(content, prefix) {
-		switch content {
-		case prefix + " 안녕", prefix + " 반가워", prefix + " 안녕!", prefix + " 반가워!":
-			s.ChannelMessageSend(m.ChannelID, helloResponses)
-		case prefix + " 자폭해":
-			s.ChannelMessageSend(m.ChannelID, "5")
-			time.Sleep(1 * time.Second)
-			s.ChannelMessageSend(m.ChannelID, "4")
-			time.Sleep(1 * time.Second)
-			s.ChannelMessageSend(m.ChannelID, "3")
-			time.Sleep(1 * time.Second)
-			s.ChannelMessageSend(m.ChannelID, "2")
-			time.Sleep(1 * time.Second)
-			s.ChannelMessageSend(m.ChannelID, "1")
-			time.Sleep(1 * time.Second)
-			s.ChannelMessageSend(m.ChannelID, "펑 (리챔 터지는 소리)")
-		}
-		if strings.HasPrefix(content, "리챔아 유저생성") {
-			database.SetGamer(s, m, d.DB)
-		}
-		if strings.HasPrefix(content, "리챔아 홀짝 시작") {
-			database.StartLRGame(s, m, d.DB)
-		}
-		if strings.HasPrefix(content, "리챔아 삭제해") {
-			err := database.DeleteMSG(s, m)
-			if err != nil {
-				log.Println(err)
-				s.ChannelMessageSend(m.ChannelID, "에러남 ㅋㅋㅋ")
+	if strings.HasPrefix(content, "내 자산") {
+		database.MySTAT(s, m, d.DB)
+	}
+	if strings.HasPrefix(content, "리챔아 ") {
+		if strings.HasPrefix(content, prefix) {
+			switch content {
+			case prefix + " 안녕", prefix + " 반가워", prefix + " 안녕!", prefix + " 반가워!":
+				s.ChannelMessageSend(m.ChannelID, helloResponses)
+			case prefix + " 자폭해":
+				s.ChannelMessageSend(m.ChannelID, "5")
+				time.Sleep(1 * time.Second)
+				s.ChannelMessageSend(m.ChannelID, "4")
+				time.Sleep(1 * time.Second)
+				s.ChannelMessageSend(m.ChannelID, "3")
+				time.Sleep(1 * time.Second)
+				s.ChannelMessageSend(m.ChannelID, "2")
+				time.Sleep(1 * time.Second)
+				s.ChannelMessageSend(m.ChannelID, "1")
+				time.Sleep(1 * time.Second)
+				s.ChannelMessageSend(m.ChannelID, "펑 (리챔 터지는 소리)")
 			}
-		}
-		if content == "리챔아" {
-			s.ChannelMessageSend(m.ChannelID, "안녕하세연?")
-		} else if strings.HasPrefix(content, prefix+" 배워") {
-			data := strings.Split(m.Content, " ")
-			answerIndex := 0
-			var datas strings.Builder
-
-			for i, word := range data {
-				if word == prefix {
-					continue
-				}
-				if word == "배워" {
-					answerIndex = i + 1
-					break
+			if strings.HasPrefix(content, "리챔아 유저생성") {
+				database.SetGamer(s, m, d.DB)
+			}
+			if strings.HasPrefix(content, "리챔아 홀짝 시작") {
+				database.StartLRGame(s, m, d.DB)
+			}
+			if strings.HasPrefix(content, "리챔아 삭제해") {
+				err := database.DeleteMSG(s, m)
+				if err != nil {
+					log.Println(err)
+					s.ChannelMessageSend(m.ChannelID, "에러남 ㅋㅋㅋ")
 				}
 			}
-			for i := answerIndex + 1; i < len(data); i++ {
-				datas.WriteString(data[i] + " ")
-			}
-			database.CreateMSG(s, m, d.DB, data[answerIndex], datas.String())
-		} else if strings.HasPrefix(content, prefix) {
-			word := strings.Split(m.Content, " ")
+			if content == "리챔아" {
+				s.ChannelMessageSend(m.ChannelID, "안녕하세연?")
+			} else if strings.HasPrefix(content, prefix+" 배워") {
+				data := strings.Split(m.Content, " ")
+				answerIndex := 0
+				var datas strings.Builder
 
-			results, haveResults := database.GetMSG(d.DB, word[1])
-			if haveResults {
-				if len(results) == 0 {
-					return
+				for i, word := range data {
+					if word == prefix {
+						continue
+					}
+					if word == "배워" {
+						answerIndex = i + 1
+						break
+					}
+				}
+				for i := answerIndex + 1; i < len(data); i++ {
+					datas.WriteString(data[i] + " ")
+				}
+				database.CreateMSG(s, m, d.DB, data[answerIndex], datas.String())
+			} else if strings.HasPrefix(content, prefix) {
+				word := strings.Split(m.Content, " ")
+
+				results, haveResults := database.GetMSG(d.DB, word[1])
+				if haveResults {
+					if len(results) == 0 {
+						return
+					} else {
+						randNum := rand.Intn(len(results))
+						s.ChannelMessageSend(m.ChannelID, results[randNum].MSG)
+						s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced(fmt.Sprintf("쓴 새끼 %s", results[randNum].Author), fmt.Sprintf("만든 날짜%s", results[randNum].CreatedAt), 16705372))
+						return
+					}
 				} else {
-					randNum := rand.Intn(len(results))
-					s.ChannelMessageSend(m.ChannelID, results[randNum].MSG)
-					s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced(fmt.Sprintf("쓴 새끼 %s", results[randNum].Author), fmt.Sprintf("만든 날짜%s", results[randNum].CreatedAt), 16705372))
+					s.ChannelMessageSend(m.ChannelID, "아직 없는 명령어이니 만들어 보아요!")
 					return
 				}
-			} else {
-				s.ChannelMessageSend(m.ChannelID, "아직 없는 명령어이니 만들어 보아요!")
-				return
 			}
 		}
 	}

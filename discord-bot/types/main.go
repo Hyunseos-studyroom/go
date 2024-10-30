@@ -11,4 +11,5 @@ type Gamer struct {
 	User   string
 	Budget int
 	Win    int
+	Games  int
 }
