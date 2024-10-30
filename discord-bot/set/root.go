@@ -26,6 +26,7 @@ func Setup(db *mongo.Client) {
 
 	dg.AddHandler(message.MessageInfoMsg)
 	dg.AddHandler(message.SendingEmbed)
+	dg.AddHandler(message.ThisMonthSalary)
 
 	dg.Identify.Intents = discordgo.IntentsGuildMessages
 	err = dg.UpdateListeningStatus("명령어 리스트는 $사용법")

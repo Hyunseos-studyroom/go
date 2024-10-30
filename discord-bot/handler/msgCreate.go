@@ -118,3 +118,25 @@ func (d *Message) SendingEmbed(s *discordgo.Session, m *discordgo.MessageCreate)
 		s.ChannelMessageSend(m.ChannelID, "유아퇴행장애인")
 	}
 }
+
+func (d *Message) ThisMonthSalary(s *discordgo.Session, m *discordgo.MessageCreate) {
+	if m.Author.ID == s.State.User.ID {
+		return
+	}
+	if m.ID == lastMessageID {
+		return
+	}
+	if m.Content == "내월급" {
+		rand.Seed(time.Now().UnixNano())
+
+		// 2000000에서 5000000 사이의 난수 생성
+		randomNum := rand.Intn(3000000) + 2000000
+
+		// 만원 단위로 반올림
+		randomNum = (randomNum / 10000) * 10000
+
+		// 포맷팅
+		formattedNum := fmt.Sprintf("%d", randomNum)
+		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("이번달 당신의 월급은?", fmt.Sprintf("<@%s> 님의 월급은 %s원 입니다.", m.Author.ID, formattedNum), 16705372))
+	}
+}
