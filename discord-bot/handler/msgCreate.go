@@ -52,6 +52,12 @@ func (d *Message) MessageInfoMsg(s *discordgo.Session, m *discordgo.MessageCreat
 			time.Sleep(1 * time.Second)
 			s.ChannelMessageSend(m.ChannelID, "펑 (리챔 터지는 소리)")
 		}
+		if strings.HasPrefix(content, "리챔아 유저생성") {
+			database.SetGamer(s, m, d.DB)
+		}
+		if strings.HasPrefix(content, "리챔아 홀짝 시작") {
+			database.StartLRGame(s, m, d.DB)
+		}
 		if strings.HasPrefix(content, "리챔아 삭제해") {
 			err := database.DeleteMSG(s, m)
 			if err != nil {

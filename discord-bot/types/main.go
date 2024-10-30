@@ -6,3 +6,9 @@ type CreateMSG struct {
 	Author    string
 	CreatedAt string
 }
+
+type Gamer struct {
+	User   string
+	Budget int
+	Win    int
+}
