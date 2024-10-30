@@ -109,10 +109,12 @@ func (d *Message) SendingEmbed(s *discordgo.Session, m *discordgo.MessageCreate)
 	}
 	switch m.Content {
 	case usageCommand:
-		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("명령어 목록", "듀\n듀댜?\n\n리챔아 배워 ooo\nooo을 하면 ooo을 함(?)", 16705372))
+		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("명령어 목록", "듀\n듀댜?\n\n리챔아 배워 ooo xxx\nxxx을 하면 ooo을 함(?)\n\n리챔아 삭제해 99\n최대 100개까지 메세지 삭제 ㄱㄴ", 16705372))
 	case "듀":
 		s.ChannelMessageSend(m.ChannelID, "듀다다듀")
 	case "듀다?":
 		s.ChannelMessageSend(m.ChannelID, "듀댜됴디")
+	case "듀댜":
+		s.ChannelMessageSend(m.ChannelID, "유아퇴행장애인")
 	}
 }
