@@ -115,7 +115,7 @@ func (d *Message) SendingEmbed(s *discordgo.Session, m *discordgo.MessageCreate)
 	}
 	switch m.Content {
 	case usageCommand:
-		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("명령어 목록", "듀\n듀댜?\n\n리챔아 배워 ooo xxx\nxxx을 하면 ooo을 함(?)\n\n리챔아 삭제해 99\n최대 100개까지 메세지 삭제 ㄱㄴ\n\n내월급\n당신의 이번달 월급은?", 16705372))
+		s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("명령어 목록", "듀\n듀댜?\n\n리챔아 배워 ooo xxx\nxxx을 하면 ooo을 함(?)\n\n리챔아 삭제해 99\n최대 100개까지 메세지 삭제 ㄱㄴ\n\n내월급\n당신의 이번달 월급은?\n\n리챔아 유저생성\n게임유저 생성ㅎㅎ\n\n리챔아 홀짝 시작\n홀짝 게임을 해봅시다. 다들 토토 해봤잖아요", 16705372))
 	case "듀":
 		s.ChannelMessageSend(m.ChannelID, "듀다다듀")
 	case "듀다?":

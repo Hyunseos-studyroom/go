@@ -166,28 +166,52 @@ func StartLRGame(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Cli
 	var gamer types.Gamer
 	err := collection.FindOne(ctx, bson.M{"user": fmt.Sprintf("<@%s>", userID)}).Decode(&gamer)
 	if err == mongo.ErrNoDocuments {
-		// 사용자 존재하지 않음
 		s.ChannelMessageSend(m.ChannelID, "죄송합니다. 초기화되지 않은 유저입니다.")
 		return
 	} else if err != nil {
-		// 다른 오류 발생
 		log.Println(err)
 		s.ChannelMessageSend(m.ChannelID, "오류가 발생했습니다. 다시 시도해 주세요.")
 		return
 	}
 
-	// 게임 규칙 설명
-	s.ChannelMessageSend(m.ChannelID, "홀짝 게임에 오신 것을 환영합니다! '홀' 또는 '짝' 중 하나를 선택해 주세요.")
+	s.ChannelMessageSendEmbed(m.ChannelID, embed.NewGenericEmbedAdvanced("어서오세요 홀짝 게임랜드입니다.", "게임을 시작하려면 배팅을 해주셔야해요.\n\n리챔아 배팅 <돈>\n이기면 배팅한 금액의 2배, 지면 배팅한 금액을 잃게 됩니다.", 16705372))
 
-	// 이 상태에서 유저의 입력을 기다리도록 합니다.
-	s.AddHandler(func(s *discordgo.Session, m *discordgo.MessageCreate) {
-		if m.Author.ID == userID && (m.Content == "홀" || m.Content == "짝") {
-			LRGame(s, m, db, gamer)
+	// 핸들러 추가: 베팅 금액을 입력받음
+	s.AddHandlerOnce(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		if m.Author.ID == userID && strings.HasPrefix(m.Content, "리챔아 배팅") {
+			index := strings.Split(m.Content, " ")
+			if len(index) < 3 {
+				s.ChannelMessageSend(m.ChannelID, "배팅 금액을 입력하세요. 예: '리챔아 배팅 50000'")
+				return
+			}
+
+			rating, err := strconv.Atoi(index[2])
+			if err != nil || rating <= 0 {
+				s.ChannelMessageSend(m.ChannelID, "올바른 배팅 금액을 입력하세요.")
+				return
+			}
+
+			if rating > gamer.Budget {
+				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("돈이 부족합니다. 현재 자본금: %d원", gamer.Budget))
+				return
+			}
+
+			// 홀짝 선택 대기
+			s.ChannelMessageSend(m.ChannelID, "이제 홀짝을 선택해 주세요. '홀' 또는 '짝'으로 입력해 주세요.")
+
+			// 핸들러 추가: 홀짝 선택을 입력받음
+			s.AddHandlerOnce(func(s *discordgo.Session, m *discordgo.MessageCreate) {
+				if m.Author.ID == userID && (m.Content == "홀" || m.Content == "짝") {
+					LRGame(s, m, db, gamer, rating)
+				} else {
+					s.ChannelMessageSend(m.ChannelID, "잘못된 선택입니다. '홀' 또는 '짝'으로 입력해 주세요.")
+				}
+			})
 		}
 	})
 }
 
-func LRGame(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Client, gamer types.Gamer) {
+func LRGame(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Client, gamer types.Gamer, rating int) {
 	rand.Seed(time.Now().UnixNano())
 	randomOutcome := "홀"
 	if rand.Intn(2) == 0 {
@@ -196,12 +220,10 @@ func LRGame(s *discordgo.Session, m *discordgo.MessageCreate, db *mongo.Client, 
 
 	// 승패 판단
 	if m.Content == randomOutcome {
-		// 승리 시 예산 증가
-		gamer.Budget += 50000
+		gamer.Budget += rating // 승리 시 예산 증가
 		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("축하합니다! 당신의 선택은 %s였고, 승리했습니다! 현재 자본금: %d원", randomOutcome, gamer.Budget))
 	} else {
-		// 패배 시 예산 감소
-		gamer.Budget -= 50000
+		gamer.Budget -= rating // 패배 시 예산 감소
 		if gamer.Budget < 0 {
 			gamer.Budget = 0 // 예산이 0 이하로 떨어지지 않도록 조정
 		}
