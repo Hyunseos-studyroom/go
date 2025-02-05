@@ -5,18 +5,24 @@ import (
 	"time"
 )
 
-func main() {
-	c := make(chan string)
-	people := [2]string{"John", "Jessi"}
-	for _, person := range people {
-		go isSexy(person, c)
+func producer(ch chan<- int) {
+	for i := 0; i < 5; i++ {
+		fmt.Printf("Producing: %d\n", i)
+		ch <- i
+		time.Sleep(time.Second)
 	}
-	fmt.Println(<-c)
-	fmt.Println(<-c)
+	close(ch)
 }
 
-func isSexy(person string, c chan string) {
-	time.Sleep(time.Second * 10)
-	fmt.Println(person)
-	c <- person + "is sexy"
+func consumer(ch <-chan int) {
+	for value := range ch {
+		fmt.Printf("Consuming: %d\n", value)
+	}
+}
+
+func main() {
+	ch := make(chan int)
+
+	go producer(ch)
+	consumer(ch)
 }
