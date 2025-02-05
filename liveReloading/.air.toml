@@ -1,0 +1,30 @@
+# air.toml
+
+# 워킹 디렉토리 설정 (보통은 현재 디렉토리로 두지만, 필요한 경우 수정 가능)
+root = "."
+
+# 코드가 변경될 때마다 빌드할 명령어 (보통 `go run`이나 `go build` 사용)
+[build]
+cmd = "go run ."
+bin = "main"
+full_bin = false
+
+# 자동으로 다시 시작할 조건 (기본값은 true)
+watch_dir = "."
+
+# 빌드 중 에러가 발생했을 때 air가 계속 동작할지 설정
+[build.errors]
+clear = false
+
+# 파일 변경을 감지할 때 사용하는 인코딩, 기본값은 `inotify` (리눅스 환경)
+[build.watch]
+interval = "100ms"
+
+# log 설정 (출력 형식 및 레벨 설정)
+[log]
+time = true
+level = "info"
+
+# 서버 재시작 관련 설정
+[server]
+address = "127.0.0.1:8080"
