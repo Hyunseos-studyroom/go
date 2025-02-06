@@ -5,14 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9b5818ca-dddc-4ed8-afff-0bf364a5110f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/gin/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Goroutines/channel.go" beforeDir="false" afterPath="$PROJECT_DIR$/Goroutines/channel.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Goroutines/gorutine.go" beforeDir="false" afterPath="$PROJECT_DIR$/Goroutines/gorutine.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Goroutines/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/Goroutines/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/defer/defer.go" beforeDir="false" afterPath="$PROJECT_DIR$/defer/defer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/panic/panic.go" beforeDir="false" afterPath="$PROJECT_DIR$/panic/panic.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/select/select.go" beforeDir="false" afterPath="$PROJECT_DIR$/select/select.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/basic/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/basic/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -5,7 +5,7 @@ message AuthData {
   string name = 1;
   string token = 2;
   int64 createDate = 3;
-  int64  expireData = 4;
+  int64 expireDate = 4;
 }
 
 message Verify {
@@ -24,7 +24,7 @@ message CreateTokenReq {
 }
 
 message CreateTokenRes {
-  AuthData AUTH = 1;
+  AuthData auth = 1;
 }
 
 message VerifyTokenReq {

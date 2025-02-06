@@ -11,15 +11,15 @@ type Network struct {
 
 	service *service.Service
 
-	engine *gin.Engine
+	engie *gin.Engine
 }
 
 func NewNetwork(cfg *config.Config, service *service.Service) (*Network, error) {
-	r := &Network{cfg: cfg, service: service, engine: gin.New()}
+	r := &Network{cfg: cfg, service: service, engie: gin.New()}
 
 	return r, nil
 }
 
-func (s *Network) StartServer() {
-	s.engine.Run(":8080")
+func (n *Network) StartServer() error {
+	return n.engie.Run(":8080")
 }
